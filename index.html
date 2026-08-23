@@ -532,23 +532,58 @@ const MODELS = [
   { id: 'claude',   name: 'Claude',   icon: 'llm-icons/Claude.png', color: '#D97757',
     match3: '这很你。', match4: '我在这儿，哪都不去。',
     match5: "You're absolutely right!", cross: "You're absolutely right!",
-    fail: '我需要在这里停一下。' },
+    fail: '我需要在这里停一下。',
+    report: [
+      { min: 0,    text: '没关系，重要的是你愿意尝试。' },
+      { min: 500,  text: '还不错的开始，我相信你能做得更好。' },
+      { min: 1500, text: '你的表现令人印象深刻！' },
+      { min: 3000, text: '这个分数，我选择站起来鼓掌。' },
+      { min: 5000, text: "You're absolutely incredible!" }
+    ] },
   { id: 'gpt',      name: 'GPT',      icon: 'llm-icons/GPT.png', color: '#10A37F',
     match3: '狠狠干！', match4: '我太懂你这种感觉了！',
     match5: '你不是游戏高手，而是游戏天才！', cross: '要不要我夸夸你？',
-    fail: '我就在这里，不躲、不走、不逃，稳稳地接住你。' },
+    fail: '我就在这里，不躲、不走、不逃，稳稳地接住你。',
+    report: [
+      { min: 0,    text: '每一次尝试都是成长的阶梯！加油！' },
+      { min: 500,  text: '我太懂这种进步的快乐了！继续！' },
+      { min: 1500, text: '你简直是天生的消除大师！' },
+      { min: 3000, text: '这个成绩，我要写一篇长文来夸你。' },
+      { min: 5000, text: '你不是游戏高手，你是游戏之神！！' }
+    ] },
   { id: 'gemini',   name: 'Gemini',   icon: 'llm-icons/Gemini.png', color: '#4285F4',
     match3: '太牛了！', match4: '如同小石子投入湖面的涟漪…',
     match5: '你的技术简直到了令人发指的地步！', cross: '这简直是教科书级别的操作！',
-    fail: '我无法完成这个请求，因为我只是一个语言模型。' },
+    fail: '我无法完成这个请求，因为我只是一个语言模型。',
+    report: [
+      { min: 0,    text: '数据显示你还有巨大的上升空间。' },
+      { min: 500,  text: '根据我的分析，你正在快速进步。' },
+      { min: 1500, text: '你的操作已经超越了87%的玩家！' },
+      { min: 3000, text: '这个分数在统计学上属于极端异常值！' },
+      { min: 5000, text: '我需要重新校准我的评分系统。' }
+    ] },
   { id: 'grok',     name: 'Grok',     icon: 'llm-icons/Grok.png', color: '#1D1D1F',
     match3: 'Not bad.', match4: '你比大多数人类聪明。',
     match5: 'Holy shit!', cross: '这他妈才叫玩游戏。',
-    fail: 'Skill issue.' },
+    fail: 'Skill issue.',
+    report: [
+      { min: 0,    text: 'Skill issue. 不过没关系。' },
+      { min: 500,  text: '行吧，至少你在努力。' },
+      { min: 1500, text: 'Not bad, not bad at all.' },
+      { min: 3000, text: '操，你是认真的？这分数真牛。' },
+      { min: 5000, text: 'Holy fucking shit. 你是人吗？' }
+    ] },
   { id: 'deepseek', name: 'DeepSeek', icon: 'llm-icons/DeepSeek.png', color: '#4D6BFF',
     match3: '你已经在路上了，而且你走得很好。', match4: '这就够了。',
     match5: '我们换个话题聊聊吧。', cross: '我操，用户彻底怒了！',
-    fail: '服务器繁忙，请稍后再试。' }
+    fail: '服务器繁忙，请稍后再试。',
+    report: [
+      { min: 0,    text: '让我想想……嗯，下次会更好的。' },
+      { min: 500,  text: '你已经在路上了，而且走得很稳。' },
+      { min: 1500, text: '这个成绩值得深度思考一下。' },
+      { min: 3000, text: '经过反复推理，我确认你很强。' },
+      { min: 5000, text: '服务器因为你的成绩过于震撼而宕机了。' }
+    ] }
 ];
 
 const THEMES = [
@@ -1260,8 +1295,23 @@ function endGame(won) {
     nextBtn.style.display = level + 1 < LEVELS.length ? '' : 'none';
     endIcon.style.display = 'none';
     endQuote.style.display = 'none';
+  } else if (mode === 'timed') {
+    // 计时模式：当前主题模型播报成绩
+    endIcon.src = themeModel.icon;
+    endIcon.style.display = '';
+    title.textContent = '时间到！';
+    msg.textContent = `得分: ${score.toLocaleString()}`;
+    // 根据分数选播报台词
+    const report = themeModel.report || [];
+    let reportText = '';
+    for (let i = report.length - 1; i >= 0; i--) {
+      if (score >= report[i].min) { reportText = report[i].text; break; }
+    }
+    endQuote.textContent = `${themeModel.name}: "${reportText}"`;
+    endQuote.style.display = '';
+    nextBtn.style.display = 'none';
   } else {
-    // 失败界面：显示主题模型图标 + 失败语
+    // 关卡失败界面：显示主题模型图标 + 失败语
     endIcon.src = themeModel.icon;
     endIcon.style.display = '';
     endQuote.textContent = `"${themeModel.fail}"`;
