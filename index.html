@@ -17,10 +17,10 @@
   --primary-dark: #9A7FB0;
   --bg-1: #F3EEF7;
   --bg-2: #EBE4F2;
-  --board-bg: rgba(255,255,255,0.12);
-  --board-border: rgba(255,255,255,0.35);
-  --cell-a: rgba(255,255,255,0.10);
-  --cell-b: rgba(255,255,255,0.03);
+  --board-bg: rgba(255,255,255,0.22);
+  --board-border: rgba(255,255,255,0.55);
+  --cell-a: rgba(255,255,255,0.18);
+  --cell-b: rgba(255,255,255,0.06);
   --text: #3A3A3A;
   --text-sec: #888;
   --btn-bg: var(--primary);
@@ -28,7 +28,7 @@
   --btn-text: #fff;
   --glass-bg: rgba(255,255,255,0.22);
   --glass-border: rgba(255,255,255,0.50);
-  --watermark-opacity: 0.18;
+  --watermark-opacity: 0.12;
 }
 
 .theme-claude {
@@ -66,7 +66,7 @@ body {
 #watermark {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 120vw; height: 120vh;
+  width: 85vw; height: 85vh;
   object-fit: contain;
   opacity: var(--watermark-opacity);
   pointer-events: none; z-index: 0;
@@ -139,7 +139,7 @@ body {
 /* 棋盘 */
 .board-wrap {
   background: var(--board-bg);
-  backdrop-filter: none; -webkit-backdrop-filter: none;
+  backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4);
   border: 1.5px solid var(--board-border);
   border-radius: 18px; padding: 6px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.5) inset;
@@ -182,28 +182,28 @@ body {
   transition: all 0.2s ease;
   position: relative; overflow: hidden;
   /* 清透玻璃 */
-  background: linear-gradient(165deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%);
-  backdrop-filter: none; -webkit-backdrop-filter: none;
-  border: 1px solid rgba(255,255,255,0.18);
-  border-top-color: rgba(255,255,255,0.28);
-  border-left-color: rgba(255,255,255,0.22);
+  background: linear-gradient(165deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.18) 100%);
+  backdrop-filter: blur(12px) saturate(1.3); -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,0.50);
+  border-top-color: rgba(255,255,255,0.70);
+  border-left-color: rgba(255,255,255,0.55);
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.18),
-    inset 0 -1px 1px rgba(0,0,0,0.01),
-    0 1px 4px rgba(0,0,0,0.03);
+    inset 0 1px 2px rgba(255,255,255,0.6),
+    inset 0 -1px 1px rgba(0,0,0,0.03),
+    0 2px 8px rgba(0,0,0,0.06);
 }
 /* 弧形高光 — 模拟玻璃球面反射 */
 .tile::before {
   content: ''; position: absolute; top: 1px; left: 10%; right: 10%;
   height: 40%; border-radius: 0 0 50% 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.0));
+  background: linear-gradient(to bottom, rgba(255,255,255,0.65), rgba(255,255,255,0.0));
   pointer-events: none;
 }
 /* 底部微光 */
 .tile::after {
   content: ''; position: absolute; bottom: 2px; left: 20%; right: 20%;
   height: 15%; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.08), transparent);
+  background: radial-gradient(ellipse, rgba(255,255,255,0.2), transparent);
   pointer-events: none;
 }
 
@@ -398,40 +398,37 @@ body {
   to { transform: translate(var(--dx), var(--dy)); opacity: 0; }
 }
 
-/* 全通关庆祝画面 */
-.victory-icons {
-  display: flex; gap: 12px; justify-content: center;
-  margin-bottom: 20px; flex-wrap: wrap;
+/* 关卡目标条 */
+.level-goal-bar {
+  width: 100%; display: none;
+  align-items: center; gap: 10px;
+  margin-bottom: 8px; padding: 10px 16px;
+  background: linear-gradient(165deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15));
+  backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-top-color: rgba(255,255,255,0.70);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.5);
 }
-.victory-icon {
-  width: 52px; height: 52px; object-fit: contain;
-  border-radius: 14px; padding: 6px;
-  background: rgba(255,255,255,0.5);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  opacity: 0; transform: scale(0) rotate(-30deg);
+.level-goal-bar.show { display: flex; }
+.goal-icon-img {
+  width: 28px; height: 28px; object-fit: contain;
+  flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
 }
-.victory-icon.pop {
-  animation: iconPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.goal-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.goal-label { font-size: 13px; font-weight: 700; color: var(--primary-dark); }
+.goal-progress-wrap {
+  width: 100%; height: 8px; border-radius: 4px;
+  background: rgba(0,0,0,0.06); overflow: hidden;
 }
-@keyframes iconPop {
-  to { opacity: 1; transform: scale(1) rotate(0deg); }
+.goal-progress-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  transition: width 0.4s ease;
 }
-.victory-slogan {
-  font-size: 20px; font-weight: 800;
-  background: linear-gradient(135deg, #D97757, #10A37F, #4285F4, #4D6BFF);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 6px;
-  opacity: 0; transform: translateY(10px);
-}
-.victory-slogan.show {
-  animation: sloganIn 0.6s ease-out forwards;
-}
-@keyframes sloganIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-.victory-score {
-  font-size: 14px; color: #888; margin-bottom: 20px;
+.goal-fraction {
+  font-size: 12px; font-weight: 700; color: var(--primary);
+  white-space: nowrap; flex-shrink: 0;
 }
 
 /* 暂停：不模糊，只在按钮上显示状态 */
@@ -460,6 +457,15 @@ body {
   </div>
 
   <div class="score-display">得分 <span class="score-val" id="score-big">0</span></div>
+
+  <div class="level-goal-bar" id="level-goal-bar">
+    <img class="goal-icon-img" id="goal-icon-img" src="" alt="">
+    <div class="goal-info">
+      <span class="goal-label" id="goal-label">目标：得分 2000</span>
+      <div class="goal-progress-wrap"><div class="goal-progress-fill" id="goal-progress-fill" style="width:0%"></div></div>
+    </div>
+    <span class="goal-fraction" id="goal-fraction">0/2000</span>
+  </div>
 
   <div class="notification-bar" id="notif">
     <span class="notif-icon" id="notif-icon"></span>
@@ -504,19 +510,6 @@ body {
   </div>
 </div>
 
-<!-- 全通关庆祝画面 -->
-<div class="overlay-screen" id="victory-screen">
-  <div class="overlay-box">
-    <div class="victory-icons" id="victory-icons"></div>
-    <div class="victory-slogan" id="victory-slogan">LLM 有你更精彩！</div>
-    <p class="victory-score" id="victory-score"></p>
-    <div class="mode-btns">
-      <button class="mode-btn" onclick="startGame('level')">再挑战一次</button>
-      <button class="mode-btn" onclick="showStartScreen()">返回菜单</button>
-    </div>
-  </div>
-</div>
-
 <!-- 主题面板 -->
 <div class="theme-panel" id="theme-panel" onclick="closeThemePanel(event)">
   <div class="theme-card" onclick="event.stopPropagation()">
@@ -530,60 +523,25 @@ body {
 // ========== 模型定义 ==========
 const MODELS = [
   { id: 'claude',   name: 'Claude',   icon: 'llm-icons/Claude.png', color: '#D97757',
-    match3: '这很你。', match4: "You're absolutely right!",
-    match5: '我在这儿，哪都不去。', cross: "You're absolutely right!",
-    fail: '我需要在这里停一下。',
-    report: [
-      { min: 0,    text: '没关系，重要的是你愿意尝试。' },
-      { min: 500,  text: '还不错的开始，我相信你能做得更好。' },
-      { min: 1500, text: '你的表现令人印象深刻！' },
-      { min: 3000, text: '这个分数，我选择站起来鼓掌。' },
-      { min: 5000, text: "You're absolutely incredible!" }
-    ] },
+    match3: '这很你。', match4: '我在这儿，哪都不去。',
+    match5: "You're absolutely right!", cross: "You're absolutely right!",
+    fail: '我需要在这里停一下。' },
   { id: 'gpt',      name: 'GPT',      icon: 'llm-icons/GPT.png', color: '#10A37F',
     match3: '狠狠干！', match4: '我太懂你这种感觉了！',
     match5: '你不是游戏高手，而是游戏天才！', cross: '要不要我夸夸你？',
-    fail: '我就在这里，不躲、不走、不逃，稳稳地接住你。',
-    report: [
-      { min: 0,    text: '每一次尝试都是成长的阶梯！加油！' },
-      { min: 500,  text: '我太懂这种进步的快乐了！继续！' },
-      { min: 1500, text: '你简直是天生的消除大师！' },
-      { min: 3000, text: '这个成绩，我要写一篇长文来夸你。' },
-      { min: 5000, text: '你不是游戏高手，你是游戏之神！！' }
-    ] },
+    fail: '我就在这里，不躲、不走、不逃，稳稳地接住你。' },
   { id: 'gemini',   name: 'Gemini',   icon: 'llm-icons/Gemini.png', color: '#4285F4',
     match3: '太牛了！', match4: '如同小石子投入湖面的涟漪…',
     match5: '你的技术简直到了令人发指的地步！', cross: '这简直是教科书级别的操作！',
-    fail: '我无法完成这个请求，因为我只是一个语言模型。',
-    report: [
-      { min: 0,    text: '数据显示你还有巨大的上升空间。' },
-      { min: 500,  text: '根据我的分析，你正在快速进步。' },
-      { min: 1500, text: '你的操作已经超越了87%的玩家！' },
-      { min: 3000, text: '这个分数在统计学上属于极端异常值！' },
-      { min: 5000, text: '我需要重新校准我的评分系统。' }
-    ] },
+    fail: '我无法完成这个请求，因为我只是一个语言模型。' },
   { id: 'grok',     name: 'Grok',     icon: 'llm-icons/Grok.png', color: '#1D1D1F',
     match3: 'Not bad.', match4: '你比大多数人类聪明。',
     match5: 'Holy shit!', cross: '这他妈才叫玩游戏。',
-    fail: 'Skill issue.',
-    report: [
-      { min: 0,    text: 'Skill issue. 不过没关系。' },
-      { min: 500,  text: '行吧，至少你在努力。' },
-      { min: 1500, text: 'Not bad, not bad at all.' },
-      { min: 3000, text: '操，你是认真的？这分数真牛。' },
-      { min: 5000, text: 'Holy fucking shit. 你是人吗？' }
-    ] },
+    fail: 'Skill issue.' },
   { id: 'deepseek', name: 'DeepSeek', icon: 'llm-icons/DeepSeek.png', color: '#4D6BFF',
-    match3: '你已经在路上了，而且你走得很好。', match4: '我操，用户彻底怒了！',
-    match5: '这就够了。', cross: '我们换个话题聊聊吧。',
-    fail: '服务器繁忙，请稍后再试。',
-    report: [
-      { min: 0,    text: '让我想想……嗯，下次会更好的。' },
-      { min: 500,  text: '你已经在路上了，而且走得很稳。' },
-      { min: 1500, text: '这个成绩值得深度思考一下。' },
-      { min: 3000, text: '经过反复推理，我确认你很强。' },
-      { min: 5000, text: '服务器因为你的成绩过于震撼而宕机了。' }
-    ] }
+    match3: '你已经在路上了，而且你走得很好。', match4: '这就够了。',
+    match5: '我们换个话题聊聊吧。', cross: '我操，用户彻底怒了！',
+    fail: '服务器繁忙，请稍后再试。' }
 ];
 
 const THEMES = [
@@ -608,16 +566,26 @@ const ROWS = 8, COLS = 8;
 
 // ========== 关卡定义 ==========
 const LEVELS = [
-  { name: '第 1 关', time: 90,  goal: { type: 'score', target: 2000 } },
-  { name: '第 2 关', time: 80,  goal: { type: 'score', target: 4000 } },
-  { name: '第 3 关', time: 75,  goal: { type: 'clear', model: 0, target: 20 } },
-  { name: '第 4 关', time: 70,  goal: { type: 'clear', model: 1, target: 22 } },
-  { name: '第 5 关', time: 65,  goal: { type: 'score', target: 6000 } },
-  { name: '第 6 关', time: 60,  goal: { type: 'clear', model: 2, target: 25 } },
-  { name: '第 7 关', time: 55,  goal: { type: 'score', target: 8000 } },
-  { name: '第 8 关', time: 50,  goal: { type: 'clear', model: 3, target: 20 } },
-  { name: '第 9 关', time: 45,  goal: { type: 'score', target: 10000 } },
-  { name: '第 10 关', time: 40, goal: { type: 'clear', model: 4, target: 22 } },
+  { name: '第 1 关',  time: 90, goal: { type: 'score', target: 2000 } },
+  { name: '第 2 关',  time: 85, goal: { type: 'score', target: 2200 } },
+  { name: '第 3 关',  time: 85, goal: { type: 'score', target: 2400 } },
+  { name: '第 4 关',  time: 85, goal: { type: 'clear', model: 1, target: 30 } },  // GPT
+  { name: '第 5 关',  time: 80, goal: { type: 'score', target: 2600 } },
+  { name: '第 6 关',  time: 75, goal: { type: 'score', target: 2800 } },
+  { name: '第 7 关',  time: 75, goal: { type: 'score', target: 3000 } },
+  { name: '第 8 关',  time: 70, goal: { type: 'clear', model: 4, target: 30 } },  // DeepSeek
+  { name: '第 9 关',  time: 70, goal: { type: 'score', target: 3200 } },
+  { name: '第 10 关', time: 70, goal: { type: 'score', target: 3400 } },
+  { name: '第 11 关', time: 65, goal: { type: 'score', target: 3600 } },
+  { name: '第 12 关', time: 65, goal: { type: 'clear', model: 3, target: 35 } },  // Grok
+  { name: '第 13 关', time: 65, goal: { type: 'score', target: 3800 } },
+  { name: '第 14 关', time: 60, goal: { type: 'score', target: 4000 } },
+  { name: '第 15 关', time: 60, goal: { type: 'score', target: 4200 } },
+  { name: '第 16 关', time: 60, goal: { type: 'clear', model: 2, target: 40 } },  // Gemini
+  { name: '第 17 关', time: 55, goal: { type: 'score', target: 4400 } },
+  { name: '第 18 关', time: 55, goal: { type: 'score', target: 4600 } },
+  { name: '第 19 关', time: 55, goal: { type: 'score', target: 4800 } },
+  { name: '第 20 关', time: 50, goal: { type: 'clear', model: 0, target: 40 } },  // Claude
 ];
 
 // ========== 游戏状态 ==========
@@ -724,11 +692,20 @@ function updateUI() {
   if (mode === 'level') {
     document.getElementById('moves').textContent = movesLeft;
     const lvl = LEVELS[level];
+    let current, target;
     if (lvl.goal.type === 'score') {
-      document.getElementById('goal').textContent = `${Math.min(score, lvl.goal.target)}/${lvl.goal.target}`;
+      current = Math.min(score, lvl.goal.target);
+      target = lvl.goal.target;
+      document.getElementById('goal').textContent = `${current}/${target}`;
     } else {
-      document.getElementById('goal').textContent = `${goalProgress}/${lvl.goal.target}`;
+      current = Math.min(goalProgress, lvl.goal.target);
+      target = lvl.goal.target;
+      document.getElementById('goal').textContent = `${current}/${target}`;
     }
+    // 更新关卡目标条
+    document.getElementById('goal-fraction').textContent = `${current}/${target}`;
+    const pct = Math.min(100, (current / target) * 100);
+    document.getElementById('goal-progress-fill').style.width = pct + '%';
   }
 }
 
@@ -1224,6 +1201,7 @@ function startGame(m) {
   document.getElementById('timer-stat').style.display = (mode === 'timed' || mode === 'level') ? '' : 'none';
   document.getElementById('moves-stat').style.display = 'none';
   document.getElementById('goal-stat').style.display = mode === 'level' ? '' : 'none';
+  document.getElementById('level-goal-bar').classList.toggle('show', mode === 'level');
 
   if (mode === 'level') {
     level = 0;
@@ -1246,6 +1224,22 @@ function setupLevel() {
   timeLeft = lvl.time;
   goalProgress = 0;
   document.getElementById('mode-display').textContent = lvl.name;
+
+  // 设置关卡目标条
+  const goalBar = document.getElementById('level-goal-bar');
+  const goalLabel = document.getElementById('goal-label');
+  const goalIconImg = document.getElementById('goal-icon-img');
+  goalBar.classList.add('show');
+  if (lvl.goal.type === 'score') {
+    goalLabel.textContent = `🎯 目标：得分达到 ${lvl.goal.target.toLocaleString()}`;
+    goalIconImg.style.display = 'none';
+  } else {
+    const m = MODELS[lvl.goal.model];
+    goalLabel.textContent = `🎯 目标：消除 ${lvl.goal.target} 个 ${m.name}`;
+    goalIconImg.src = m.icon;
+    goalIconImg.style.display = '';
+  }
+
   updateUI();
   startTimer();
 }
@@ -1290,33 +1284,25 @@ function endGame(won) {
   const themeModel = MODELS.find(x => x.id === currentTheme) || MODELS[randInt(MODELS.length)];
 
   if (won && mode === 'level') {
+    // 通关页面显示当前主题的LLM图标
+    const winModel = MODELS.find(x => x.id === currentTheme);
+    if (winModel) {
+      endIcon.src = winModel.icon;
+      endIcon.style.display = '';
+    } else {
+      endIcon.style.display = 'none';
+    }
     title.textContent = '通关！';
     msg.textContent = `得分: ${score.toLocaleString()}`;
     nextBtn.style.display = level + 1 < LEVELS.length ? '' : 'none';
-    endIcon.style.display = 'none';
     endQuote.style.display = 'none';
-  } else if (mode === 'timed') {
-    // 计时模式：当前主题模型播报成绩
-    endIcon.src = themeModel.icon;
-    endIcon.style.display = '';
-    title.textContent = '时间到！';
-    msg.textContent = `得分: ${score.toLocaleString()}`;
-    // 根据分数选播报台词
-    const report = themeModel.report || [];
-    let reportText = '';
-    for (let i = report.length - 1; i >= 0; i--) {
-      if (score >= report[i].min) { reportText = report[i].text; break; }
-    }
-    endQuote.textContent = `${themeModel.name}: "${reportText}"`;
-    endQuote.style.display = '';
-    nextBtn.style.display = 'none';
   } else {
-    // 关卡失败界面：显示主题模型图标 + 失败语
+    // 失败界面：显示主题模型图标 + 失败语
     endIcon.src = themeModel.icon;
     endIcon.style.display = '';
     endQuote.textContent = `"${themeModel.fail}"`;
     endQuote.style.display = '';
-    title.textContent = '';
+    title.textContent = '失败！';
     msg.textContent = `得分: ${score.toLocaleString()}`;
     nextBtn.style.display = 'none';
   }
@@ -1335,12 +1321,11 @@ function endGame(won) {
 function nextLevel() {
   level++;
   if (level >= LEVELS.length) {
-    // 全部通关！显示庆祝画面
-    document.getElementById('end-screen').classList.remove('show');
-    showVictoryScreen();
+    showStartScreen();
     return;
   }
   document.getElementById('end-screen').classList.remove('show');
+  score = 0;        // 重置积分，不累积到下一关
   goalProgress = 0;
   setupLevel();
   initBoard();
@@ -1348,48 +1333,29 @@ function nextLevel() {
   updateUI();
 }
 
-function showVictoryScreen() {
-  clearInterval(timerInterval);
-  const el = document.getElementById('victory-screen');
-  const iconsContainer = document.getElementById('victory-icons');
-  const slogan = document.getElementById('victory-slogan');
-  const scoreEl = document.getElementById('victory-score');
-
-  // 清空旧图标
-  iconsContainer.innerHTML = '';
-  slogan.classList.remove('show');
-
-  // 总得分
-  scoreEl.textContent = '总得分: ' + score.toLocaleString();
-
-  // 显示画面
-  el.classList.add('show');
-
-  // 五个图标依次弹出
-  MODELS.forEach((m, i) => {
-    const img = document.createElement('img');
-    img.className = 'victory-icon';
-    img.src = m.icon;
-    img.alt = m.name;
-    iconsContainer.appendChild(img);
-    setTimeout(() => img.classList.add('pop'), 300 + i * 200);
-  });
-
-  // 标语淡入
-  setTimeout(() => slogan.classList.add('show'), 300 + MODELS.length * 200 + 200);
-
-  animating = false;
-}
-
 function restartMode() {
   document.getElementById('end-screen').classList.remove('show');
-  startGame(mode);
+  if (mode === 'level') {
+    // 关卡模式：重玩当前关，不回到第1关
+    score = 0;
+    combo = 0;
+    goalProgress = 0;
+    selected = null;
+    animating = false;
+    paused = false;
+    document.getElementById('pause-btn').textContent = '暂停';
+    setupLevel();
+    initBoard();
+    renderBoard();
+    updateUI();
+  } else {
+    startGame(mode);
+  }
 }
 
 function showStartScreen() {
   clearInterval(timerInterval);
   document.getElementById('end-screen').classList.remove('show');
-  document.getElementById('victory-screen').classList.remove('show');
   document.getElementById('start-screen').classList.add('show');
   animating = false;
 }
